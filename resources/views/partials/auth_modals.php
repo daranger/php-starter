@@ -26,6 +26,7 @@
         </form>
         
         <div style="text-align: center; margin-top: 15px;">
+            <?php if (setting('google_client_id')): ?>
             <a href="/api/auth/google" class="btn btn--outline js-google-login" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
@@ -35,15 +36,19 @@
                 </svg>
                 Войти через Google
             </a>
+            <?php endif; ?>
         </div>
 
         <div class="modal-footer-links">
+            <?php if (setting('allow_registration', '1') == '1'): ?>
             <a href="#" data-modal-open="register-modal">Регистрация</a>
+            <?php endif; ?>
             <a href="#" data-modal-open="forgot-password-modal">Забыли пароль?</a>
         </div>
     </div>
 </div>
 
+<?php if (setting('allow_registration', '1') == '1'): ?>
 <!-- Register Modal -->
 <div class="modal" id="register-modal">
     <div class="modal-header">
@@ -65,6 +70,7 @@
         </form>
 
         <div style="text-align: center; margin-top: 15px;">
+            <?php if (setting('google_client_id')): ?>
             <a href="/api/auth/google" class="btn btn--outline js-google-login" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
@@ -74,6 +80,7 @@
                 </svg>
                 Продолжить через Google
             </a>
+            <?php endif; ?>
         </div>
 
         <div class="modal-footer-links">
@@ -81,6 +88,7 @@
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Forgot Password Modal -->
 <div class="modal" id="forgot-password-modal">
