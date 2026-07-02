@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Core\Application;
+use App\Console\Kernel;
+
+// Инициализируем ядро приложения для настройки Container, Env и т.д.
+$app = new Application();
+
+// Инициализируем консольное ядро
+$kernel = new Kernel();
+$kernel->handle($argv);
