@@ -10,7 +10,11 @@ A modern, lightweight PHP starter kit and micro-framework with a built-in admin 
 
 ![Login / 2FA](public/assets/sc/4.png)
 
-![PHP](https://img.shields.io/badge/PHP-8.1%2B-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/daranger/php-starter.svg?style=square)](https://packagist.org/packages/daranger/php-starter)
+[![Total Downloads](https://img.shields.io/packagist/dt/daranger/php-starter.svg?style=square)](https://packagist.org/packages/daranger/php-starter)
+[![GitHub Tests](https://github.com/daranger/php-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/daranger/php-starter/actions)
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-blue?style=square)
+[![License](https://img.shields.io/packagist/l/daranger/php-starter.svg?style=square)](https://packagist.org/packages/daranger/php-starter)
 
 ---
 
