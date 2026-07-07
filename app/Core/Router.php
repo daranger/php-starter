@@ -18,6 +18,16 @@ class Router
         return self::addRoute('GET', $uri, $action);
     }
 
+    public static function currentRouteIs(string $name): bool {
+        $uri = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+        $name = $name === 'home' ? '' : trim($name, '/');
+        return $uri === $name;
+    }
+
+    public static function url(string $name): string {
+        return $name === 'home' ? '/' : '/' . ltrim($name, '/');
+    }
+
     public static function post(string $uri, array|callable $action): self
     {
         return self::addRoute('POST', $uri, $action);
