@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Admin\Controllers\SettingsController;
 use App\Admin\Controllers\TemplateController;
 use App\Core\Router;
 use App\Core\Request;
@@ -42,13 +43,13 @@ Router::group(['middleware' => [CsrfMiddleware::class, AdminMiddleware::class]],
     
     // Глобальные настройки
     Router::get('/admin/settings', function(Request $request) {
-        $controller = new \App\Admin\Controllers\SettingsController();
+        $controller = new SettingsController();
         $res = $controller->index();
         $data = array_merge($res['data'], ['view' => $res['view'], 'no_layout' => true]);
         return new Response(view('admin.layout', $data));
     });
     Router::post('/admin/settings/save', function(Request $request) {
-        $controller = new \App\Admin\Controllers\SettingsController();
+        $controller = new SettingsController();
         return new Response((string)$controller->save());
     });
     Router::post('/admin/settings/upload-favicon', function(Request $request) {
