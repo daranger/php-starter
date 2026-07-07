@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Admin\Controllers\TemplateController;
 use App\Core\Router;
 use App\Core\Request;
 use App\Core\Response;
@@ -62,17 +63,17 @@ Router::group(['middleware' => [CsrfMiddleware::class, AdminMiddleware::class]],
 
     // Редактор шаблонов
     Router::get('/admin/templates', function(Request $request) {
-        $controller = new \App\Admin\Controllers\TemplateController();
+        $controller = new TemplateController();
         $res = $controller->index();
         $data = array_merge($res['data'], ['view' => $res['view'], 'no_layout' => true]);
         return new Response(view('admin.layout', $data));
     });
     Router::post('/admin/templates/save', function(Request $request) {
-        $controller = new \App\Admin\Controllers\TemplateController();
+        $controller = new TemplateController();
         return new Response((string)$controller->save());
     });
     Router::post('/admin/templates/restore', function(Request $request) {
-        $controller = new \App\Admin\Controllers\TemplateController();
+        $controller = new TemplateController();
         return new Response((string)$controller->restore());
     });
 

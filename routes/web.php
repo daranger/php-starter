@@ -1,9 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
 use App\Core\Router;
-use App\Core\Response;
 
 // Общая группа (доступна всем)
 Router::group(['middleware' => [\App\Http\Middleware\CsrfMiddleware::class]], function () {
@@ -20,8 +18,4 @@ Router::group(['middleware' => [\App\Http\Middleware\CsrfMiddleware::class]], fu
     });
 
     Router::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index']);
-
-    Router::get('/debug-headers', function () {
-        return App\Core\Response::json($_SERVER);
-    });
 });
