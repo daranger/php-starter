@@ -28,6 +28,16 @@ class Router
         return $name === 'home' ? '/' : '/' . ltrim($name, '/');
     }
 
+    public static function currentRouteName(): string
+    {
+        // Получаем текущий URI без начальных и конечных слешей
+        $uri = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+
+        // Если мы на главной, считаем, что имя роута — 'home'.
+        // Иначе просто возвращаем сам путь (например, 'menu', 'about').
+        return $uri === '' ? 'home' : $uri;
+    }
+
     public static function post(string $uri, array|callable $action): self
     {
         return self::addRoute('POST', $uri, $action);
