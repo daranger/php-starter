@@ -42,12 +42,22 @@ class InstallerService
                 $files = scandir($migrationsDir);
                 sort($files);
                 foreach ($files as $file) {
-                    if (str_ends_with($file, '.sql')) {
+                    if (str_ends_with($file, '.php')) {
+                        try {
+                            $migrationObj = require $migrationsDir . '/' . $file;
+                            if (is_object($migrationObj) && method_exists($migrationObj, 'up')) {
+                                $migrationObj->up($pdo);
+                            }
+                        } catch (\PDOException $e) {
+                            if ($e->getCode() !== '42S01' && $e->getCode() !== '42S21') {
+                                throw $e;
+                            }
+                        }
+                    } elseif (str_ends_with($file, '.sql')) {
                         try {
                             $sql = file_get_contents($migrationsDir . '/' . $file);
                             $pdo->exec($sql);
                         } catch (\PDOException $e) {
-                            // Игнорируем ошибки: 42S01 (Таблица уже существует), 42S21 (Дубликат колонки)
                             if ($e->getCode() !== '42S01' && $e->getCode() !== '42S21') {
                                 throw $e;
                             }

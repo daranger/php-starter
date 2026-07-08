@@ -48,10 +48,15 @@ class MigrateCommand extends Command
 
         foreach ($migrationsToRun as $file) {
             $this->info("Migrating: {$file}");
-            
-            $sql = file_get_contents($migrationsPath . '/' . $file);
-            $this->db->exec($sql);
-            
+            if (str_ends_with($file, '.php')) {
+                $migrationObj = require $migrationsPath . '/' . $file;
+                if (is_object($migrationObj) && method_exists($migrationObj, 'up')) {
+                    $migrationObj->up($this->db);
+                }
+            } elseif (str_ends_with($file, '.sql')) {
+                $sql = file_get_contents($migrationsPath . '/' . $file);
+                $this->db->exec($sql);
+            }
             $this->logMigration($file);
             
             $this->info("Migrated: {$file}");
