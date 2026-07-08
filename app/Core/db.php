@@ -61,7 +61,7 @@ class db
 {
     private static ?PDO $pdo = null;
 
-    private static function getPdo(): PDO
+    public static function getPdo(): PDO
     {
         if (self::$pdo === null) {
             self::$pdo = Container::getInstance()->make(PDO::class);
