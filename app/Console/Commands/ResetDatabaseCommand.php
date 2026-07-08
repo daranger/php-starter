@@ -20,7 +20,7 @@ class ResetDatabaseCommand extends Command
     {
         $this->info("Fetching tables to drop...");
 
-        $excludedTables = ['users', 'settings', 'password_resets'];
+        $excludedTables = ['users', 'settings', 'password_resets', 'migrations'];
         
         $stmt = $this->db->query("SHOW TABLES");
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);

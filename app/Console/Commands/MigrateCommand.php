@@ -53,9 +53,23 @@ class MigrateCommand extends Command
         foreach ($migrationsToRun as $file) {
             $this->info("Migrating: {$file}");
             
-            $migrationObj = require $migrationsPath . '/' . $file;
+            $declaredClassesBefore = get_declared_classes();
+            $migrationObj = require_once $migrationsPath . '/' . $file;
+            $declaredClassesAfter = get_declared_classes();
+            
+            $newClasses = array_diff($declaredClassesAfter, $declaredClassesBefore);
+            if (!empty($newClasses)) {
+                $migrationClass = reset($newClasses);
+                $migrationObj = new $migrationClass();
+            }
+
             if (is_object($migrationObj) && method_exists($migrationObj, 'up')) {
-                $migrationObj->up($this->db);
+                $ref = new \ReflectionMethod($migrationObj, 'up');
+                if ($ref->getNumberOfParameters() > 0) {
+                    $migrationObj->up($this->db);
+                } else {
+                    $migrationObj->up();
+                }
             }
             
             $this->logMigration($file);
