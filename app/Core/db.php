@@ -57,7 +57,7 @@ class DbResult implements \IteratorAggregate
     }
 }
 
-class Db
+class db
 {
     private static ?PDO $pdo = null;
 

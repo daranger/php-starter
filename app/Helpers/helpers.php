@@ -84,7 +84,7 @@ if (!function_exists('admin')) {
         static $isAdmin = null;
         if ($isAdmin !== null) return $isAdmin;
 
-        $user = \App\Core\Db::query("SELECT role FROM users WHERE id = " . (int)$userId)->fetchObject();
+        $user = \App\Core\db::query("SELECT role FROM users WHERE id = " . (int)$userId)->fetchObject();
         $isAdmin = ($user && $user->role === 'admin');
         
         return $isAdmin;
@@ -149,7 +149,7 @@ function setting(string $key, $default = null)
 
     if ($settingsCache === null) {
         try {
-            $rows = \App\Core\Db::query("SELECT setting_key, setting_value FROM settings");
+            $rows = \App\Core\db::query("SELECT setting_key, setting_value FROM settings");
             $settingsCache = [];
             foreach ($rows as $r) {
                 $settingsCache[$r['setting_key']] = $r['setting_value'];
