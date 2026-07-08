@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace App\Admin\Controllers;
 
-use App\Core\db;
+use App\Core\Db;
 
 class SettingsController
 {
     public function index()
     {
-        $settingsRaw = db::query("SELECT * FROM settings ORDER BY setting_group ASC, setting_label ASC");
+        $settingsRaw = Db::query("SELECT * FROM settings ORDER BY setting_group ASC, setting_label ASC");
         
         $settingsByGroup = [];
         foreach ($settingsRaw as $s) {
@@ -33,13 +33,13 @@ class SettingsController
         ];
         
         try {
-            $dbVersion = db::query("SELECT VERSION() as v")->fetchObject()->v;
+            $dbVersion = Db::query("SELECT VERSION() as v")->fetchObject()->v;
             $systemInfo['Database Version'] = $dbVersion;
         } catch (\Throwable $e) {
             $systemInfo['Database Version'] = 'Unknown';
         }
 
-        $result = db::query("SELECT TABLE_NAME as table_name FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE()");
+        $result = Db::query("SELECT TABLE_NAME as table_name FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE()");
         $dbTables = [];
         while ($t = $result->fetchObject()) {
             $dbTables[] = $t;
@@ -67,7 +67,7 @@ class SettingsController
         
         // Handling checkboxes (booleans). Since unchecked checkboxes don't send anything,
         // we first get all boolean settings from the DB to set them to '0' if they are missing in $_POST.
-        $booleans = db::query("SELECT setting_key FROM settings WHERE setting_type = 'boolean'");
+        $booleans = Db::query("SELECT setting_key FROM settings WHERE setting_type = 'boolean'");
         foreach ($booleans as $b) {
             $key = $b['setting_key'];
             if (!isset($postData[$key])) {

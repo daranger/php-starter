@@ -17,7 +17,7 @@ class AdminMiddleware implements MiddlewareInterface
         }
         
         try {
-            $res = \App\Core\db::query("SELECT setting_value FROM settings WHERE setting_key = 'admin_ip_whitelist'");
+            $res = \App\Core\Db::query("SELECT setting_value FROM settings WHERE setting_key = 'admin_ip_whitelist'");
             $row = $res->fetch_assoc();
             $whitelistStr = $row ? trim((string)$row['setting_value']) : '';
             

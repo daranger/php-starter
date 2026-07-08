@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Core\db;
+use App\Core\Db;
 use App\Core\Response;
 
 class AdminController
@@ -207,7 +207,7 @@ class AdminController
             'disk_usage' => ($disk_total !== false) ? ($disk_total - $disk_free) : 0,
             'disk_total' => $disk_total ?: 0,
             'memory_usage' => memory_get_usage(true),
-            'mysql_ok' => db::query("SELECT VERSION()")->fetchObject()->{'VERSION()'},
+            'mysql_ok' => Db::query("SELECT VERSION()")->fetchObject()->{'VERSION()'},
             'processes' => $process_count, // Добавили количество процессов
             'redis_ok' => (isset($GLOBALS['redis']) && $GLOBALS['redis']->ping()->getPayload() === 'PONG'),
             'system_info' => [
@@ -245,20 +245,20 @@ class AdminController
         $id = intval(explode('/edit/', $p)[1]);
         $t = $this->validateTable(explode('/', explode('/admin/', $p)[1])[0]); //table name
         $ok = '';
-        $row = db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
+        $row = Db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
         if (isset($_POST['submit'])) {
             $sql = [];
             foreach ($_POST as $k => &$v) {
                 if (in_array($k, ['submit', '_csrf'], true) || is_array($v)) continue;
                 if (preg_match('/date|created_at|updated_at/', $k) && is_string($v) && str_contains($v, '-')) $v = $v ? $v : 0;
                 
-                $sql[] = "`$k`='" . db::realEscapeString(trim($v)) . "'";
+                $sql[] = "`$k`='" . Db::realEscapeString(trim($v)) . "'";
             }
 
-            db::query("UPDATE `$t` SET " . implode(', ', $sql) . " WHERE id='$id'");
+            Db::query("UPDATE `$t` SET " . implode(', ', $sql) . " WHERE id='$id'");
             
             $ok = '<div class="alert alert-success">Successfully updated!</div>';
-            $row = db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
+            $row = Db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
         }
 
         return [
@@ -266,7 +266,7 @@ class AdminController
             'data' => [
                 'id' => $id,
                 'table_name' => $t,
-                'columns' => db::query("SHOW COLUMNS FROM `$t`"),
+                'columns' => Db::query("SHOW COLUMNS FROM `$t`"),
                 'row' => $row,
                 'ok' => $ok,
                 'db_tables' => self::getDbTables()
@@ -278,7 +278,7 @@ class AdminController
     {
         $id = intval(explode('/delete/', $p)[1]);
         $t = $this->validateTable(explode('/', explode('/admin/', $p)[1])[0]);
-        db::query("DELETE FROM `$t` WHERE id='$id'");
+        Db::query("DELETE FROM `$t` WHERE id='$id'");
         header("Location: " . ($_SERVER['HTTP_REFERER'] ?? '/admin/'));
         exit;
     }
@@ -287,8 +287,8 @@ class AdminController
     {
         $id = intval(explode('/spam/', $p)[1]);
         $t = $this->validateTable(explode('/', explode('/admin/', $p)[1])[0]);
-        db::query("DELETE FROM `$t` WHERE id='$id'");
-        // db::query("INSERT IGNORE INTO spam (`ip`) VALUES ('" . db::realEscapeString($_GET['ip'] ?? '') . "')");
+        Db::query("DELETE FROM `$t` WHERE id='$id'");
+        // Db::query("INSERT IGNORE INTO spam (`ip`) VALUES ('" . Db::realEscapeString($_GET['ip'] ?? '') . "')");
         header("Location: " . ($_SERVER['HTTP_REFERER'] ?? '/admin/'));
         exit;
     }
@@ -301,14 +301,14 @@ class AdminController
         
         $columns = [];
         $defaultSort = null;
-        $colsQuery = db::query("SHOW COLUMNS FROM `$t`");
+        $colsQuery = Db::query("SHOW COLUMNS FROM `$t`");
         foreach ($colsQuery as $col) {
             $columns[] = $col;
             if ($defaultSort === null) $defaultSort = $col['Field'];
             if ($col['Key'] === 'PRI') $defaultSort = $col['Field'];
         }
 
-        $cnt = db::query("SELECT count(*) as count FROM `$t`")->fetchObject()->count;
+        $cnt = Db::query("SELECT count(*) as count FROM `$t`")->fetchObject()->count;
         $sort = !empty($_GET['sort']) ? preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['sort']) : $defaultSort;
         $validColumns = array_column($columns, 'Field');
         if (!in_array($sort, $validColumns, true)) {
@@ -321,7 +321,7 @@ class AdminController
             'data' => [
                 'h1' => $t,
                 'columns' => $columns,
-                'rows' => db::query("SELECT * FROM `$t` ORDER BY `{$sort}` {$ord} LIMIT $lim OFFSET " . (($pg * $lim) - $lim)),
+                'rows' => Db::query("SELECT * FROM `$t` ORDER BY `{$sort}` {$ord} LIMIT $lim OFFSET " . (($pg * $lim) - $lim)),
                 'pages' => ceil($cnt / $lim), 
                 'current_sort' => $_GET['sort'] ?? '',
                 'current_order' => strtolower($_GET['order'] ?? '') === 'desc' ? 'desc' : 'asc', 
@@ -332,7 +332,7 @@ class AdminController
 
     public static function getDbTables(): array
     {
-        $result = db::query("SELECT TABLE_NAME as table_name FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE()");
+        $result = Db::query("SELECT TABLE_NAME as table_name FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE()");
         $tables = [];
         while ($t = $result->fetchObject()) {
             $tables[] = $t;
