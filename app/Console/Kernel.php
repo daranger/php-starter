@@ -11,6 +11,7 @@ class Kernel
 {
     private array $commands = [
         Commands\MigrateCommand::class,
+        Commands\ResetDatabaseCommand::class,
     ];
 
     public function handle(array $argv): void
