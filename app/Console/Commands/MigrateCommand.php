@@ -53,9 +53,8 @@ class MigrateCommand extends Command
                 if (is_object($migrationObj) && method_exists($migrationObj, 'up')) {
                     $migrationObj->up($this->db);
                 }
-            } elseif (str_ends_with($file, '.sql')) {
-                $sql = file_get_contents($migrationsPath . '/' . $file);
-                $this->db->exec($sql);
+            } else {
+                continue; // Игнорируем .sql и другие файлы
             }
             $this->logMigration($file);
             
