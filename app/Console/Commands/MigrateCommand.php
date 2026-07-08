@@ -36,6 +36,10 @@ class MigrateCommand extends Command
                 continue;
             }
 
+            if (!str_ends_with($file, '.php')) {
+                continue;
+            }
+
             if (!$this->hasMigrationRun($file)) {
                 $migrationsToRun[] = $file;
             }
@@ -48,14 +52,12 @@ class MigrateCommand extends Command
 
         foreach ($migrationsToRun as $file) {
             $this->info("Migrating: {$file}");
-            if (str_ends_with($file, '.php')) {
-                $migrationObj = require $migrationsPath . '/' . $file;
-                if (is_object($migrationObj) && method_exists($migrationObj, 'up')) {
-                    $migrationObj->up($this->db);
-                }
-            } else {
-                continue; // Игнорируем .sql и другие файлы
+            
+            $migrationObj = require $migrationsPath . '/' . $file;
+            if (is_object($migrationObj) && method_exists($migrationObj, 'up')) {
+                $migrationObj->up($this->db);
             }
+            
             $this->logMigration($file);
             
             $this->info("Migrated: {$file}");
