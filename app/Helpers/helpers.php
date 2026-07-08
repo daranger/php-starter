@@ -1,4 +1,5 @@
 <?php
+class_alias('App\Core\db', 'App\Core\Db');
 
 use App\Core\Firewall;
 
