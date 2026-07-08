@@ -1,5 +1,5 @@
 <?php
-class_alias('App\Core\db', 'App\Core\Db');
+require_once __DIR__ . '/../Core/db.php';
 
 use App\Core\Firewall;
 
