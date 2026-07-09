@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Exceptions\Handler;
+use App\Http\Controllers\InstallController;
 use App\Providers\AppServiceProvider;
 
 class Application
@@ -13,7 +14,6 @@ class Application
     {
         $this->loadEnv(__DIR__ . '/../../.env');
         Handler::init();
-
         (new AppServiceProvider())->register();
     }
 
@@ -26,7 +26,7 @@ class Application
         $request = Request::capture();
 
         if (($_ENV['APP_INSTALLED'] ?? 'true') === 'false') {
-            $controller = new \App\Http\Controllers\InstallController();
+            $controller = new InstallController();
             $response = $controller->handle($request);
             $response->send();
             return;
@@ -61,6 +61,5 @@ class Application
         }
 
     }
-
 
 }

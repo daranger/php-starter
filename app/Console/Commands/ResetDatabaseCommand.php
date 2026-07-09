@@ -10,7 +10,7 @@ use PDO;
 class ResetDatabaseCommand extends Command
 {
     protected string $signature = 'reset-database';
-    protected string $description = 'Drop all tables except core tables (users, settings, password_resets, migrations)';
+    protected string $description = 'Drop all tables except core tables (users, settings, password_resets)';
 
     public function __construct(
         private readonly PDO $db
@@ -20,7 +20,7 @@ class ResetDatabaseCommand extends Command
     {
         $this->info("Fetching tables to drop...");
 
-        $excludedTables = ['users', 'settings', 'password_resets', 'migrations'];
+        $excludedTables = ['users', 'settings', 'password_resets'];
         
         $stmt = $this->db->query("SHOW TABLES");
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);

@@ -60,7 +60,6 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
-
                 <div class="desktop-auth desktop-auth-container">
                     <?php if (\App\Core\Session::has('user_id')): ?>
                         <form action="/api/auth/logout" method="POST" class="m-0">
