@@ -69,7 +69,7 @@ class Application
                     'error'   => $e->getMessage()
                 ]);
             } else {
-                echo "<div style='padding:20px; font-family:sans-serif;'><h3>Ошибка:</h3><p>{$e->getMessage()}</p><pre>{$e->getTraceAsString()}</pre></div>";
+                Handler::init()->render($e);
             }
         }
     }
