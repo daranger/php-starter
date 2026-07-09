@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 90%;
+            background: #bfd0e5;
+            border-radius: 24px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 1rem;
+            line-height: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #0f172a;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #475569;
+            color: #ffffff;
+            padding: 0.9rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(71, 85, 107, 0.15);
+        }
+
+        .btn:hover {
+            background-color: #334155;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(71, 85, 107, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="error-code">404</div>
+    <h1>Page Not Found</h1>
+    <p>Oops! The page or file you are looking for doesn't exist or has been moved.</p>
+    <a href="/" class="btn">Go to Homepage</a>
+</div>
+
+</body>
+</html>

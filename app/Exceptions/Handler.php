@@ -138,6 +138,11 @@ class Handler
             http_response_code($code);
         }
 
+        if ($code == 404) {
+            require_once __DIR__ . '/../../resources/views/errors/404.html';
+            exit;
+        }
+
         if (admin()) {
             include __DIR__ . '/../../resources/views/errors/debug.php';
             exit;
