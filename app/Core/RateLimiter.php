@@ -20,15 +20,12 @@ class RateLimiter
      * Если лимит превышен — отдаем 429 и мягко завершаем работу,
      * если всё ок — скрипт идет дальше.
      */
-    public function attempt(string $action, int $maxAttempts, int $decaySeconds): void
+    public function attempt(string $action, int $maxAttempts, int $decaySeconds, ?string $identifier = null): void
     {
-        // 1. Используем твой красивый Request, чтобы вытащить IP
-        $request = new Request();
-        $ip = $request->ip();
+        // 1. Используем переданный идентификатор или IP-адрес по умолчанию
+        $identifier = $identifier ?? (new Request())->ip();
 
-
-
-        $key = "rate_limit:{$action}:{$ip}";
+        $key = "rate_limit:{$action}:{$identifier}";
 
         try {
             // 2. Получаем текущее количество попыток из Redis

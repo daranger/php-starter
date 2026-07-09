@@ -40,6 +40,9 @@ class AuthController
             }
 
             $userId = Session::get('2fa_pending_user_id');
+            
+            $this->rateLimiter->attempt('verify2fa', 5, 60, 'user_' . $userId);
+            
             $verifySuccess = $this->authService->verify2FA((int)$userId, $code);
 
             if (!$verifySuccess) {
@@ -62,6 +65,8 @@ class AuthController
         if (!$userId) {
             return Response::json(['error' => 'Сессия устарела. Войдите заново.'], 401);
         }
+
+        $this->rateLimiter->attempt('verify2fa', 5, 60, 'user_' . $userId);
 
         $success = $this->authService->verify2FA((int)$userId, $code);
 
