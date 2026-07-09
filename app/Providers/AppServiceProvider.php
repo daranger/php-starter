@@ -33,8 +33,7 @@ class AppServiceProvider
         // Инициализируем инстанс через интерфейс Predis
         $redis = $container->make(\Predis\ClientInterface::class);
 
-        // Делаем инстанс доступным через global $redis для старых узлов (например, RateLimiter)
-        global $redis;
+        // Делаем инстанс доступным через $GLOBALS для старых узлов (AdminController)
         $GLOBALS['redis'] = $redis;
 
         // 2. Формируем DSN и регистрируем PDO с использованием хелпера env()
