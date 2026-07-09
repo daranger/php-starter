@@ -162,9 +162,10 @@ class Handler
                 500 => 'Internal Server Error'
             ];
 
-            $message = $errorMessages[$code] ?? 'Internal Server Error';
+            $message = $e->getMessage() ?: ($errorMessages[$code] ?? 'Internal Server Error');
 
             echo json_encode([
+                'success' => false,
                 'error' => true,
                 'status' => $code,
                 'message' => $message
@@ -183,6 +184,9 @@ class Handler
 
     protected function isJson(): bool
     {
-        return (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'));
+        $isApiRoute = isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '/api/');
+        $wantsJson = isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json');
+        
+        return $isApiRoute || $wantsJson;
     }
 }

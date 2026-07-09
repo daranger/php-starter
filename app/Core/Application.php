@@ -45,29 +45,8 @@ class Application
         }
 
 
-        try {
-            $response = Router::dispatch($request);
-            $response->send();
-        } catch (Exception $e) {
-            if (php_sapi_name() !== 'cli') {
-                $code = (int)$e->getCode();
-                if ($code < 100 || $code > 599) {
-                    $code = 500;
-                }
-                http_response_code($code);
-            }
-
-            // Если упал HTML-роут — отдаем красивую ошибку, если API — JSON
-            $errorUri = $request->path();
-            if (str_starts_with($errorUri, '/api/')) {
-                echo json_encode([
-                    'success' => false,
-                    'error'   => $e->getMessage()
-                ]);
-            } else {
-                Handler::init()->render($e);
-            }
-        }
+        $response = Router::dispatch($request);
+        $response->send();
     }
 
 
