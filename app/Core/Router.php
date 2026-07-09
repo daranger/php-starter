@@ -192,7 +192,8 @@ class Router
     {
         $middlewares = $route['middleware'];
         
-        // Add MaintenanceMiddleware as the first middleware to execute globally
+        // Add MaintenanceMiddleware and TrafficMiddleware to execute globally
+        array_unshift($middlewares, \App\Http\Middleware\TrafficMiddleware::class);
         array_unshift($middlewares, \App\Http\Middleware\MaintenanceMiddleware::class);
         
         $action = function ($req) use ($route, $routeParams) {

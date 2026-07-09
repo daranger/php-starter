@@ -11,10 +11,7 @@ use Exception;
 
 class Application
 {
-    /**
-     * Локальное хранилище для инстанса Redis (Predis\Client)
-     */
-    private $redis;
+
 
     public function __construct()
     {
@@ -47,7 +44,6 @@ class Application
             return;
         }
 
-        $this->recordTraffic($request);
 
         try {
             $response = Router::dispatch($request);
@@ -74,38 +70,7 @@ class Application
         }
     }
 
-    /**
-     * Record traffic into Redis for the dashboard.
-     * Uses HyperLogLog to track unique IPs and filters out bots.
-     */
-    private function recordTraffic(Request $request): void
-    {
-        if (!$this->redis) return;
-        
-        $ua = (string) $request->header('user-agent', '');
-        if (preg_match('/bot|crawl|slurp|spider|mediapartners|apis-google/i', $ua)) {
-            return; // Отсеиваем ботов
-        }
-        
-        $ip = $request->ip();
 
-        try {
-            $date = date('Y-m-d');
-            $min = floor(date('i') / 5) * 5;
-            $timeKey = date('Y-m-d:H') . ':' . str_pad((string)$min, 2, '0', STR_PAD_LEFT);
-            
-            $todayKey = "traffic:unique:today:$date";
-            $bucketKey = "traffic:unique:5min:$timeKey";
-            
-            $this->redis->pfadd($todayKey, [$ip]);
-            $this->redis->expire($todayKey, 172800); // храним 2 суток
-            
-            $this->redis->pfadd($bucketKey, [$ip]);
-            $this->redis->expire($bucketKey, 7200); // храним 2 часа
-        } catch (\Exception $e) {
-            // Игнорируем ошибки Redis
-        }
-    }
 
     /**
      * Конфигурация и наполнение DI Контейнера системными сервисами
@@ -128,12 +93,11 @@ class Application
             return $c->make(\Predis\ClientInterface::class);
         }, true);
 
-        // Инициализируем локальное свойство через интерфейс Predis
-        $this->redis = $container->make(\Predis\ClientInterface::class);
+        // Инициализируем инстанс через интерфейс Predis
+        $redis = $container->make(\Predis\ClientInterface::class);
 
         // Делаем инстанс доступным через global $redis для старых узлов (например, RateLimiter)
         global $redis;
-        $redis = $this->redis;
 
         // 2. Формируем DSN и регистрируем PDO с использованием хелпера env()
         $driver = env('DB_DRIVER', 'mysql');
