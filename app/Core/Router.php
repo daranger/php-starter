@@ -161,7 +161,7 @@ class Router
             $request->setParameter($key, $value);
         }
 
-        return self::runRoute($routeInfo['route'], $request);
+        return self::runRoute($routeInfo['route'], $request, $routeInfo['parameters']);
     }
 
     private static function findRoute(string $method, string $uri): ?array
@@ -188,22 +188,23 @@ class Router
         return null;
     }
 
-    private static function runRoute(array $route, Request $request): Response
+    private static function runRoute(array $route, Request $request, array $routeParams = []): Response
     {
         $middlewares = $route['middleware'];
         
         // Add MaintenanceMiddleware as the first middleware to execute globally
         array_unshift($middlewares, \App\Http\Middleware\MaintenanceMiddleware::class);
         
-        $action = function ($req) use ($route) {
+        $action = function ($req) use ($route, $routeParams) {
             $action = $route['action'];
+            $callParams = array_merge($routeParams, ['request' => $req]);
             
             if (is_callable($action)) {
-                $response = Container::getInstance()->call($action, ['request' => $req]);
+                $response = Container::getInstance()->call($action, $callParams);
             } elseif (is_array($action)) {
                 [$controllerClass, $method] = $action;
                 $controller = Container::getInstance()->make($controllerClass);
-                $response = Container::getInstance()->call([$controller, $method], ['request' => $req]);
+                $response = Container::getInstance()->call([$controller, $method], $callParams);
             } else {
                 throw new Exception("Invalid route action");
             }

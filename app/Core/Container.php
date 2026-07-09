@@ -166,7 +166,20 @@ class Container
             $type = $parameter->getType();
 
             if (array_key_exists($name, $parameters)) {
-                $dependencies[] = $parameters[$name];
+                $value = $parameters[$name];
+                
+                if ($type && $type instanceof ReflectionNamedType && $type->isBuiltin()) {
+                    $typeName = $type->getName();
+                    if ($typeName === 'int') {
+                        $value = (int) $value;
+                    } elseif ($typeName === 'float') {
+                        $value = (float) $value;
+                    } elseif ($typeName === 'bool') {
+                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    }
+                }
+                
+                $dependencies[] = $value;
                 continue;
             }
 
