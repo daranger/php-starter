@@ -143,7 +143,9 @@ class Handler
             exit;
         }
 
-        if (admin()) {
+        $isLocalhost = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true);
+        
+        if ($isLocalhost || admin()) {
             include __DIR__ . '/../../resources/views/errors/debug.php';
             exit;
         }
