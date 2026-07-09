@@ -85,13 +85,31 @@ public function route(string $key, mixed $default = null): mixed
     return $this->parameters[$key] ?? $default;
 }
 
-public function ip(): string
-{
-    return $this->server['HTTP_CF_CONNECTING_IP']
-        ?? $this->server['HTTP_X_FORWARDED_FOR']
-        ?? $this->server['REMOTE_ADDR']
-        ?? '0.0.0.0';
-}
+    public function ip(): string
+    {
+        $remoteAddr = $this->server['REMOTE_ADDR'] ?? '0.0.0.0';
+        $trustedProxies = $_ENV['TRUSTED_PROXIES'] ?? '';
+
+        $isTrusted = false;
+        if ($trustedProxies === '*') {
+            $isTrusted = true;
+        } elseif ($trustedProxies !== '') {
+            $proxies = array_filter(array_map('trim', explode(',', $trustedProxies)));
+            $isTrusted = in_array($remoteAddr, $proxies, true);
+        }
+
+        if ($isTrusted) {
+            if (!empty($this->server['HTTP_CF_CONNECTING_IP'])) {
+                return trim($this->server['HTTP_CF_CONNECTING_IP']);
+            }
+            if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
+                $ips = explode(',', $this->server['HTTP_X_FORWARDED_FOR']);
+                return trim($ips[0]);
+            }
+        }
+
+        return $remoteAddr;
+    }
 
 public function method(): string
 {

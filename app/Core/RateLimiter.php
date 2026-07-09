@@ -26,10 +26,7 @@ class RateLimiter
         $request = new Request();
         $ip = $request->ip();
 
-        // Учитываем Cloudflare, если он включен в .env
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-            $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
-        }
+
 
         $key = "rate_limit:{$action}:{$ip}";
 
