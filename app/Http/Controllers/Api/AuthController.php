@@ -12,7 +12,8 @@ use App\Services\AuthService;
 class AuthController
 {
     public function __construct(
-        private readonly AuthService $authService
+        private readonly AuthService $authService,
+        private readonly \App\Core\RateLimiter $rateLimiter
     ) {}
 
     public function login(Request $request): Response
@@ -24,6 +25,8 @@ class AuthController
         if (empty($email) || empty($password)) {
             return Response::json(['error' => 'Заполните все поля'], 422);
         }
+
+        $this->rateLimiter->attempt('login', 5, 60); // 5 попыток в минуту
 
         $success = $this->authService->attempt($email, $password);
 
@@ -82,6 +85,8 @@ class AuthController
             return Response::json(['error' => 'Пароль должен быть не менее 6 символов'], 422);
         }
 
+        $this->rateLimiter->attempt('register', 3, 60); // 3 попытки регистрации в минуту
+
         try {
             $this->authService->register([
                 'email' => $email,
@@ -107,6 +112,8 @@ class AuthController
         if (empty($email)) {
             return Response::json(['error' => 'Введите email'], 422);
         }
+
+        $this->rateLimiter->attempt('forgot_password', 3, 60); // 3 попытки восстановления в минуту
 
         $this->authService->sendPasswordResetLink($email);
 
