@@ -149,7 +149,10 @@ class AuthController
         $redirectUri = setting('app_url', 'http://localhost:8000') . '/api/auth/google/callback';
         $scope = 'email profile';
         
-        $url = "https://accounts.google.com/o/oauth2/v2/auth?client_id={$clientId}&redirect_uri={$redirectUri}&response_type=code&scope={$scope}&access_type=online";
+        $state = bin2hex(random_bytes(16));
+        Session::set('oauth_state', $state);
+        
+        $url = "https://accounts.google.com/o/oauth2/v2/auth?client_id={$clientId}&redirect_uri={$redirectUri}&response_type=code&scope={$scope}&access_type=online&state={$state}";
         
         return Response::redirect($url);
     }
@@ -157,10 +160,14 @@ class AuthController
     public function googleCallback(Request $request): Response
     {
         $code = (string) $request->input('code');
+        $state = (string) $request->input('state');
+        $savedState = Session::get('oauth_state');
 
-        if (empty($code)) {
-            return new Response("<script>alert('Ошибка авторизации Google'); window.close();</script>", 200, ['Content-Type' => 'text/html; charset=utf-8']);
+        if (empty($code) || empty($state) || $state !== $savedState) {
+            return new Response("<script>alert('Ошибка авторизации Google или неверный state'); window.close();</script>", 200, ['Content-Type' => 'text/html; charset=utf-8']);
         }
+        
+        Session::remove('oauth_state');
 
         $user = $this->authService->handleGoogleCallback($code);
 
