@@ -95,6 +95,11 @@ class ProfileController
             return Response::json(['error' => 'Ошибка загрузки файла'], 422);
         }
 
+        // Защита от DoS: ограничиваем размер файла (максимум 2 МБ)
+        if ($file['size'] > 2 * 1024 * 1024) {
+            return Response::json(['error' => 'Файл слишком большой. Максимальный размер 2 МБ'], 422);
+        }
+
         $info = @getimagesize($file['tmp_name']);
         if (!$info) {
             return Response::json(['error' => 'Некорректное изображение'], 422);
