@@ -246,19 +246,38 @@ class AdminController
         $t = $this->validateTable(explode('/', explode('/admin/', $p)[1])[0]); //table name
         $ok = '';
         $row = db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
+        
         if (isset($_POST['submit'])) {
-            $sql = [];
-            foreach ($_POST as $k => &$v) {
-                if (in_array($k, ['submit', '_csrf'], true) || is_array($v)) continue;
-                if (preg_match('/date|created_at|updated_at/', $k) && is_string($v) && str_contains($v, '-')) $v = $v ? $v : 0;
-                
-                $sql[] = "`$k`='" . db::realEscapeString(trim($v)) . "'";
+            // Получаем список валидных колонок таблицы
+            $validColumns = [];
+            $colsQuery = db::query("SHOW COLUMNS FROM `$t`");
+            foreach ($colsQuery as $col) {
+                $validColumns[] = $col['Field'];
             }
 
-            db::query("UPDATE `$t` SET " . implode(', ', $sql) . " WHERE id='$id'");
+            $setParts = [];
+            $params = [];
             
-            $ok = '<div class="alert alert-success">Successfully updated!</div>';
-            $row = db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
+            foreach ($_POST as $k => $v) {
+                if (in_array($k, ['submit', '_csrf'], true) || is_array($v)) continue;
+                if (!in_array($k, $validColumns, true)) continue; // Whitelist колонок
+
+                if (preg_match('/date|created_at|updated_at/', $k) && is_string($v) && str_contains($v, '-')) $v = $v ? $v : 0;
+                
+                $setParts[] = "`$k` = :$k";
+                $params[$k] = trim((string)$v);
+            }
+
+            if (!empty($setParts)) {
+                $sql = "UPDATE `$t` SET " . implode(', ', $setParts) . " WHERE id = :id";
+                $params['id'] = $id;
+                
+                $stmt = \App\Core\db::getPdo()->prepare($sql);
+                $stmt->execute($params);
+                
+                $ok = '<div class="alert alert-success">Successfully updated!</div>';
+                $row = db::query("SELECT * FROM `$t` WHERE id=$id")->fetchObject();
+            }
         }
 
         return [
