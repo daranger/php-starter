@@ -689,3 +689,60 @@ html[data-theme="dark"] .social-link.twitter:hover { background: #fff; color: #0
 html[data-theme="dark"] .social-link.github:hover { background: #fff; color: #000; box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4); }
 .social-link.youtube:hover { background: #FF0000; box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); }
 .social-link.vk:hover { background: #0077FF; box-shadow: 0 5px 15px rgba(0, 119, 255, 0.4); }
+
+/* Utility Classes for Layout */
+.w-100 { width: 100%; }
+.d-block { display: block; }
+.m-0 { margin: 0; }
+.d-inline-block { display: inline-block; }
+.mb-20 { margin-bottom: 20px; }
+
+/* Header Elements */
+.mobile-menu-toggle-btn {
+    display: none;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 1.2rem;
+}
+
+.theme-toggle-btn {
+    padding: 4px;
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+}
+
+.lang-selector-select {
+    width: auto;
+    padding: 8px 12px;
+}
+
+.desktop-auth-container {
+    display: inline-flex;
+    gap: 16px;
+    align-items: center;
+}
+
+/* Alert Global */
+.alert-global {
+    background: var(--color-error);
+    color: white;
+    padding: 10px;
+    border-radius: var(--radius-md);
+}
+
+/* Footer Elements */
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-time {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}

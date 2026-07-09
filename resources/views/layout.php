@@ -22,7 +22,7 @@
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="/" class="logo">PHP Starter</a>
+            <a href="/" class="logo"><?=setting('app_name');?></a>
             
             <nav class="main-nav">
                 <a href="/" class="nav-link"><?= __('nav_home') ?></a>
@@ -34,26 +34,26 @@
                 
                 <div class="mobile-auth">
                     <?php if (\App\Core\Session::has('user_id')): ?>
-                        <form action="/api/auth/logout" method="POST" style="margin: 0; display: inline-block;">
+                        <form action="/api/auth/logout" method="POST" class="m-0 d-inline-block">
                             <input type="hidden" name="_csrf" value="<?= \App\Core\Session::token() ?>">
-                            <button type="submit" class="btn btn--danger" style="width: 100%;"><?= __('btn_logout') ?></button>
+                            <button type="submit" class="btn btn--danger w-100"><?= __('btn_logout') ?></button>
                         </form>
                     <?php else: ?>
-                        <a href="#" data-modal-open="login-modal" class="btn btn--primary" style="width: 100%; display: block;"><?= __('btn_login') ?></a>
+                        <a href="#" data-modal-open="login-modal" class="btn btn--primary w-100 d-block"><?= __('btn_login') ?></a>
                     <?php endif; ?>
                 </div>
             </nav>
 
-            <button id="mobile-menu-toggle" class="btn" style="display: none; padding: 8px 12px; background: transparent; border: 1px solid var(--color-border); color: var(--color-text); font-size: 1.2rem;">
+            <button id="mobile-menu-toggle" class="btn mobile-menu-toggle-btn">
                 <i class="fas fa-bars"></i>
             </button>
 
             <div class="header-actions">
                 <!-- Theme Toggle -->
-                <button id="theme-toggle" class="btn" style="padding: 4px; background: transparent; border: none; color: var(--color-text);"><i class="fas fa-moon"></i></button>
+                <button id="theme-toggle" class="btn theme-toggle-btn"><i class="fas fa-moon"></i></button>
                 
                 <!-- Language Selector -->
-                <select id="lang-selector" class="form__input" style="width: auto; padding: 8px 12px;">
+                <select id="lang-selector" class="form__input lang-selector-select">
                     <?php foreach (config('app.available_locales') as $code => $name): ?>
                         <option value="<?= $code ?>" <?= ($_COOKIE['lang'] ?? config('app.locale')) === $code ? 'selected' : '' ?>>
                             <?= strtoupper($code) ?>
@@ -61,9 +61,9 @@
                     <?php endforeach; ?>
                 </select>
 
-                <div class="desktop-auth" style="display: inline-flex; gap: 16px; align-items: center;">
+                <div class="desktop-auth desktop-auth-container">
                     <?php if (\App\Core\Session::has('user_id')): ?>
-                        <form action="/api/auth/logout" method="POST" style="margin: 0;">
+                        <form action="/api/auth/logout" method="POST" class="m-0">
                             <input type="hidden" name="_csrf" value="<?= \App\Core\Session::token() ?>">
                             <button type="submit" class="btn btn--danger"><?= __('btn_logout') ?></button>
                         </form>
@@ -78,7 +78,7 @@
     <main class="site-main">
         <div class="container">
             <?php if ($error = \App\Core\Session::getFlash('error')): ?>
-                <div class="alert alert--error" style="background: var(--color-error); color: white; padding: 10px; margin-bottom: 20px; border-radius: var(--radius-md);">
+                <div class="alert alert--error alert-global">
                     <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
@@ -88,7 +88,7 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div class="container footer-inner">
             <div>&copy; <?= date('Y') ?> PHP Starter Kit. All rights reserved.</div>
             
             <div class="social-footer">
@@ -113,7 +113,7 @@
             </div>
 
             <?php if (admin()): ?>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">t: <?= isset($_SERVER['REQUEST_TIME_FLOAT']) ? round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3) : '0.000' ?>s</div>
+                <div class="footer-time">t: <?= isset($_SERVER['REQUEST_TIME_FLOAT']) ? round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3) : '0.000' ?>s</div>
             <?php endif; ?>
         </div>
     </footer>
